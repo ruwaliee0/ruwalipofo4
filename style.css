@@ -1770,12 +1770,12 @@ body.cursor-hover .cursor-outline {
   .auth-section { padding: 24px 20px; }
   .auth-header h2 { font-size: 1.35rem; }
 }
-/* यो CSS कोडलाई style.css बाट हटाउनुहोस् */
+/*  CSS  style.css 
 #forgotPasswordLink,
 .forgot-password-container {
   display: none !important;
 }
-/* Forgot Password लाई डेस्कटप र मोबाइल दुवैमा पूर्ण रूपमा बीचमा (Center) राख्ने */
+/* Forgot Password  */
 #loginForm .forgot-password-container,
 .auth-modal .forgot-password-container {
   display: flex !important;
@@ -1789,7 +1789,7 @@ body.cursor-hover .cursor-outline {
   position: relative !important;
 }
 
-/* लिङ्कको डिजाइन र साइज */
+/* Designandsize */
 #loginForm .forgot-password-container a,
 .auth-modal .forgot-password-container a {
   font-size: 14px !important;
