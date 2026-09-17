@@ -1,13 +1,88 @@
 /**
- * Alex Vance Portfolio Architecture
- * Engine: Vanilla JavaScript (ES6+)
+ * Sharan Ruwali Portfolio Engine
+ * Features: Mobile & Desktop Responsive Logic, Direct LocalStorage Auth, 
+ * Strict Device Email Match Validation, Web3Forms Alerts, Google Identity SDK.
  */
+
+// ------------------------------------------------------------------
+// API Configurations
+// ------------------------------------------------------------------
+const WEB3FORMS_ACCESS_KEY = "ddee9129-153a-41f6-bc3b-320a4563aabb";
+const EMAILVERIFY_API_KEY = "YOUR_EMAILVERIFY_API_KEY"; // Place your EmailVerify.io or Abstract API Key here
+const GOOGLE_CLIENT_ID = "915820950265-ofrd7v6p7cvues6i5vd865ci8jqlj2v6.apps.googleusercontent.com";
+
+// Temporary Holder for Registration Data (Device Email Matching Logic)
+window.pendingRegistrationData = null;
+
+// ------------------------------------------------------------------
+// Web3Forms Configuration & Admin Notification Helper
+// ------------------------------------------------------------------
+async function sendAdminAuthNotification(userName, userEmail, actionType) {
+  try {
+    await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify({
+        access_key: WEB3FORMS_ACCESS_KEY,
+        subject: `New Auth Alert: ${actionType} (${userName || "User"})`,
+        from_name: "Portfolio Auth Alert",
+        email: userEmail,
+        message: `User Auth Event Notification:\n\nEvent Type: ${actionType}\nName: ${userName || "N/A"}\nEmail: ${userEmail}\nTime: ${new Date().toLocaleString()}`
+      })
+    });
+    console.log(`Admin notification email sent via Web3Forms for: ${actionType}`);
+  } catch (err) {
+    console.error('Failed to send admin notification email:', err);
+  }
+}
+
+// ------------------------------------------------------------------
+// Async Email Strict Validator (Blocks Fake Mailboxes & Random Formats)
+// ------------------------------------------------------------------
+const DISPOSABLE_DOMAINS = [
+  'mailinator.com', '10minutemail.com', 'tempmail.com', 'yopmail.com',
+  'guerrillamail.com', 'dispostable.com', 'sharklasers.com', 'getnada.com',
+  'throwawaymail.com', 'temp-mail.org', 'fake-box.com', 'maildrop.cc'
+];
+
+async function isStrictValidEmail(email) {
+  if (!email) return false;
+  
+  // Standard RFC Email Regex Check
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(email)) return false;
+
+  const domain = email.split('@')[1]?.toLowerCase();
+  
+  // Block Disposable / Temporary Email Domains
+  if (DISPOSABLE_DOMAINS.includes(domain)) {
+    return false;
+  }
+
+  // Live Check via Verification API
+  if (EMAILVERIFY_API_KEY && EMAILVERIFY_API_KEY !== "YOUR_EMAILVERIFY_API_KEY") {
+    try {
+      const res = await fetch(`https://emailvalidation.abstractapi.com/v1/?api_key=${EMAILVERIFY_API_KEY}&email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+      if (data.deliverability !== "DELIVERABLE" || data.is_disposable_email?.value) {
+        return false;
+      }
+    } catch (e) {
+      console.warn("Live API check failed, falling back to local domain validation.");
+    }
+  }
+
+  return true;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   'use strict';
 
   // ------------------------------------------------------------------
-  // 1. Navigation & Mobile Drawer
+  // 1. Mobile Navigation & Responsive Drawer Toggle
   // ------------------------------------------------------------------
   const navbar = document.getElementById('navbar');
   const hamburgerBtn = document.getElementById('hamburgerBtn');
@@ -15,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const navLinks = document.querySelectorAll('.nav-link');
 
   const handleScrollNavbar = () => {
+    if (!navbar) return;
     if (window.scrollY > 40) {
       navbar.classList.add('scrolled');
     } else {
@@ -23,29 +99,32 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const toggleMobileMenu = () => {
+    if (!navMenu) return;
     const isOpen = navMenu.classList.contains('is-open');
     if (isOpen) {
       navMenu.classList.remove('is-open');
-      hamburgerBtn.setAttribute('aria-expanded', 'false');
+      hamburgerBtn?.classList.remove('is-active');
+      hamburgerBtn?.setAttribute('aria-expanded', 'false');
       document.body.style.overflow = '';
     } else {
       navMenu.classList.add('is-open');
-      hamburgerBtn.setAttribute('aria-expanded', 'true');
+      hamburgerBtn?.classList.add('is-active');
+      hamburgerBtn?.setAttribute('aria-expanded', 'true');
       document.body.style.overflow = 'hidden';
     }
   };
 
-  hamburgerBtn.addEventListener('click', toggleMobileMenu);
+  hamburgerBtn?.addEventListener('click', toggleMobileMenu);
 
   navLinks.forEach(link => {
     link.addEventListener('click', () => {
-      if (navMenu.classList.contains('is-open')) {
+      if (navMenu?.classList.contains('is-open')) {
         toggleMobileMenu();
       }
     });
   });
 
-  // Active Nav Link Observer
+  // Active Navigation Scroll Tracking
   const sections = document.querySelectorAll('section[id]');
   const observeActiveSection = () => {
     const scrollPosition = window.scrollY + 200;
@@ -72,99 +151,66 @@ document.addEventListener('DOMContentLoaded', () => {
   const progressBar = document.getElementById('progressBar');
 
   const updateProgressBar = () => {
+    if (!progressBar) return;
     const scrollTop = window.scrollY;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const scrollPercent = (scrollTop / docHeight) * 100;
+    const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
     progressBar.style.width = `${scrollPercent}%`;
   };
 
   // ------------------------------------------------------------------
-  // 3. Custom Cursor Follower
+  // 3. Custom Cursor Follower (Disabled for Touch Devices)
   // ------------------------------------------------------------------
   const cursorDot = document.getElementById('cursorDot');
   const cursorOutline = document.getElementById('cursorOutline');
+  const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
 
-  const moveCursor = (e) => {
-    document.body.classList.add('cursor-active');
-    const posX = e.clientX;
-    const posY = e.clientY;
+  if (!isTouchDevice && cursorDot && cursorOutline) {
+    const moveCursor = (e) => {
+      document.body.classList.add('cursor-active');
+      const posX = e.clientX;
+      const posY = e.clientY;
 
-    cursorDot.style.left = `${posX}px`;
-    cursorDot.style.top = `${posY}px`;
+      cursorDot.style.left = `${posX}px`;
+      cursorDot.style.top = `${posY}px`;
 
-    cursorOutline.animate({
-      left: `${posX}px`,
-      top: `${posY}px`
-    }, { duration: 400, fill: 'forwards' });
-  };
+      cursorOutline.animate({
+        left: `${posX}px`,
+        top: `${posY}px`
+      }, { duration: 400, fill: 'forwards' });
+    };
 
-  window.addEventListener('mousemove', moveCursor);
+    window.addEventListener('mousemove', moveCursor);
 
-  const hoverTargets = document.querySelectorAll('a, button, input, textarea, .service-row, .project-card, .filter-btn');
-  hoverTargets.forEach(target => {
-    target.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
-    target.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
-  });
-
-  // ------------------------------------------------------------------
-  // 4. Scroll Reveal Animations (Intersection Observer)
-  // ------------------------------------------------------------------
-  const revealItems = document.querySelectorAll('.reveal-item');
-
-  const revealObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-revealed');
-        observer.unobserve(entry.target);
-      }
+    const hoverTargets = document.querySelectorAll('a, button, input, textarea, .service-bw-card, .project-card, .filter-btn');
+    hoverTargets.forEach(target => {
+      target.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+      target.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
     });
-  }, {
-    threshold: 0.15,
-    rootMargin: '0px 0px -40px 0px'
-  });
-
-  revealItems.forEach(item => revealObserver.observe(item));
-
-  // ------------------------------------------------------------------
-  // 5. Statistics Counter Animation
-  // ------------------------------------------------------------------
-  const statNumbers = document.querySelectorAll('.stat-number');
-  let animatedStats = false;
-
-  const animateCounters = () => {
-    statNumbers.forEach(stat => {
-      const target = parseInt(stat.getAttribute('data-target'), 10);
-      let count = 0;
-      const speed = target / 40;
-
-      const updateCount = () => {
-        count += speed;
-        if (count < target) {
-          stat.innerText = Math.ceil(count);
-          setTimeout(updateCount, 30);
-        } else {
-          stat.innerText = target;
-        }
-      };
-
-      updateCount();
-    });
-  };
-
-  const statsSection = document.querySelector('.stats-section');
-  if (statsSection) {
-    const statsObserver = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && !animatedStats) {
-        animateCounters();
-        animatedStats = true;
-      }
-    }, { threshold: 0.5 });
-
-    statsObserver.observe(statsSection);
   }
 
   // ------------------------------------------------------------------
-  // 6. Projects Filtering System
+  // 4. Scroll Reveal Observer
+  // ------------------------------------------------------------------
+  const revealItems = document.querySelectorAll('.reveal-item');
+  if (revealItems.length > 0) {
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.15,
+      rootMargin: '0px 0px -30px 0px'
+    });
+
+    revealItems.forEach(item => revealObserver.observe(item));
+  }
+
+  // ------------------------------------------------------------------
+  // 5. Portfolio Filtering Logic
   // ------------------------------------------------------------------
   const filterBtns = document.querySelectorAll('.filter-btn');
   const projectCards = document.querySelectorAll('.project-card');
@@ -183,18 +229,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
       projectCards.forEach(card => {
         const category = card.getAttribute('data-category');
-
         if (filterValue === 'all' || filterValue === category) {
-          card.classList.remove('is-hidden');
+          card.style.display = 'block';
+          setTimeout(() => card.classList.remove('is-hidden'), 10);
         } else {
           card.classList.add('is-hidden');
+          setTimeout(() => { card.style.display = 'none'; }, 300);
         }
       });
     });
   });
 
   // ------------------------------------------------------------------
-  // 7. Contact Form Validation
+  // 6. Contact Form Validation & Mail Dispatch
   // ------------------------------------------------------------------
   const contactForm = document.getElementById('contactForm');
   const nameInput = document.getElementById('userName');
@@ -202,259 +249,309 @@ document.addEventListener('DOMContentLoaded', () => {
   const messageInput = document.getElementById('userMessage');
   const formStatus = document.getElementById('formStatus');
 
-  const validateEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
   if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       let isValid = true;
 
       document.querySelectorAll('.form-group').forEach(group => group.classList.remove('has-error'));
 
-      if (!nameInput.value.trim()) {
-        nameInput.parentElement.classList.add('has-error');
+      if (!nameInput?.value.trim()) {
+        nameInput?.parentElement?.classList.add('has-error');
         isValid = false;
       }
 
-      if (!emailInput.value.trim() || !validateEmail(emailInput.value.trim())) {
-        emailInput.parentElement.classList.add('has-error');
+      const isEmailValid = await isStrictValidEmail(emailInput?.value.trim());
+      if (!emailInput?.value.trim() || !isEmailValid) {
+        emailInput?.parentElement?.classList.add('has-error');
+        alert("Please provide a valid, active email address.");
         isValid = false;
       }
 
-      if (!messageInput.value.trim()) {
-        messageInput.parentElement.classList.add('has-error');
+      if (!messageInput?.value.trim()) {
+        messageInput?.parentElement?.classList.add('has-error');
         isValid = false;
       }
 
       if (isValid) {
-        formStatus.textContent = 'Sending message...';
-        formStatus.style.color = 'var(--text-primary)';
+        if (formStatus) {
+          formStatus.textContent = 'Sending message...';
+          formStatus.style.color = '#000';
+        }
 
         setTimeout(() => {
-          formStatus.textContent = 'Thank you. Your message has been sent successfully.';
+          if (formStatus) {
+            formStatus.textContent = 'Thank you! Your message has been submitted.';
+            formStatus.style.color = 'green';
+          }
           contactForm.reset();
-        }, 1200);
+        }, 1000);
       }
     });
   }
 
   // ------------------------------------------------------------------
-  // 8. Back to Top Scroll
+  // 7. Global Listeners & Back To Top
   // ------------------------------------------------------------------
   const backToTopBtn = document.getElementById('backToTop');
-  if (backToTopBtn) {
-    backToTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  }
+  backToTopBtn?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 
-  // Global Scroll Listener
   window.addEventListener('scroll', () => {
     handleScrollNavbar();
     updateProgressBar();
     observeActiveSection();
   });
 });
+
 // ------------------------------------------------------------------
-// 9. Auth UI & Full OTP Verification Logic (With Forgot Password & Mail Alerts)
+// 8. Auth Modal Tabs Switching
 // ------------------------------------------------------------------
 const tabLoginBtn = document.getElementById('tabLoginBtn');
 const tabRegisterBtn = document.getElementById('tabRegisterBtn');
 const loginSection = document.getElementById('loginSection');
 const registerSection = document.getElementById('registerSection');
 
-// Tab Switch Functionality
 tabLoginBtn?.addEventListener('click', () => {
   tabLoginBtn.classList.add('active');
-  tabRegisterBtn.classList.remove('active');
-  loginSection.classList.add('active');
-  registerSection.classList.remove('active');
+  tabRegisterBtn?.classList.remove('active');
+  loginSection?.classList.add('active');
+  registerSection?.classList.remove('active');
 });
 
 tabRegisterBtn?.addEventListener('click', () => {
-  tabRegisterBtn.classList.add('active');
-  tabLoginBtn.classList.remove('active');
-  registerSection.classList.add('active');
-  loginSection.classList.remove('active');
+  tabRegisterBtn?.classList.add('active');
+  tabLoginBtn?.classList.remove('active');
+  registerSection?.classList.add('active');
+  loginSection?.classList.remove('active');
 });
 
-const WEB3FORMS_ACCESS_KEY = "ddee9129-153a-41f6-bc3b-320a4563aabb";
-
-// मेल पठाउने Helper Function
-async function sendMail(subject, messageBody) {
-  try {
-    await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json"
-      },
-      body: JSON.stringify({
-        access_key: WEB3FORMS_ACCESS_KEY,
-        subject: subject,
-        from_name: "Portfolio Auth System",
-        message: messageBody
-      })
-    });
-  } catch (err) {
-    console.log("Mail Send Error:", err);
-  }
-}
-
-// 1. Account Creation with OTP Verification
+// ------------------------------------------------------------------
+// 9. Sign Up with Google Device Email Verification Match
+// ------------------------------------------------------------------
 const registerForm = document.getElementById('registerForm');
 registerForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const name = document.getElementById('regName').value.trim();
-  const email = document.getElementById('regEmail').value.trim().toLowerCase();
-  const password = document.getElementById('regPassword').value;
+  const name = document.getElementById('regName')?.value.trim();
+  const email = document.getElementById('regEmail')?.value.trim().toLowerCase();
+  const password = document.getElementById('regPassword')?.value;
 
-  if (localStorage.getItem(`user_${email}`)) {
-    alert('An account with this email already exists. Please sign in.।');
-    tabLoginBtn.click();
+  if (!name || !email || !password) return;
+
+  const isValid = await isStrictValidEmail(email);
+  if (!isValid) {
+    alert('Invalid or temporary email format. Please provide a valid email address.');
     return;
   }
 
-  const generatedOTP = Math.floor(1000 + Math.random() * 9000);
-  
-  alert(`तपाईंको इमेल (${email}) मा Verification Code पठाइएको छ।`);
-  await sendMail("Account Verification OTP", `Hello ${name},\n\nYour OTP code is: ${generatedOTP}`);
+  if (localStorage.getItem(`user_${email}`)) {
+    alert('An account with this email already exists. Please sign in.');
+    tabLoginBtn?.click();
+    return;
+  }
 
-  const userEnteredOTP = prompt("Please enter the 4-digit OTP code received in your email here.");
+  // Save temporary registration data to global window object
+  window.pendingRegistrationData = { name, email, password };
 
-  if (userEnteredOTP && parseInt(userEnteredOTP) === generatedOTP) {
-    const userData = { name, email, password };
-    localStorage.setItem(`user_${email}`, JSON.stringify(userData));
-    
-    await sendMail(
-      "New User Account Created & Verified!", 
-      `New Account Created:\n\nName: ${name}\nEmail: ${email}\nTime: ${new Date().toLocaleString()}`
-    );
+  alert(`Device Verification Required:\n\nPlease select the Google Account (${email}) from the pop-up to confirm ownership.`);
 
-    alert('Account successfully created and verified! Please sign in now.।');
-    registerForm.reset();
-    tabLoginBtn.click();
+  // Trigger Google Prompt Modal on Desktop/Mobile
+  if (typeof google !== 'undefined' && google.accounts) {
+    google.accounts.id.prompt();
   } else {
-    alert('Incorrect OTP code! Account could not be created. sorry hai');
+    alert('Google Identity SDK failed to load. Please reload the page.');
   }
 });
 
-// 2. Sign In (Login with OTP Verification + Mail Alert)
+// ------------------------------------------------------------------
+// 10. Direct Sign In Handler
+// ------------------------------------------------------------------
 const loginForm = document.getElementById('loginForm');
 loginForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-  const password = document.getElementById('loginPassword').value;
+  const email = document.getElementById('loginEmail')?.value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword')?.value;
+
+  if (!email || !password) return;
+
+  const isValid = await isStrictValidEmail(email);
+  if (!isValid) {
+    alert('Invalid email format or non-existent email.');
+    return;
+  }
 
   const storedData = localStorage.getItem(`user_${email}`);
 
   if (!storedData) {
-    alert('No account found with this email. Please create an account first.।');
-    tabRegisterBtn.click();
+    alert('No account found with this email. Please create an account or sign in with Google.');
+    tabRegisterBtn?.click();
     return;
   }
 
   const userData = JSON.parse(storedData);
 
   if (userData.password === password) {
-    const loginOTP = Math.floor(1000 + Math.random() * 9000);
-    alert(`For security purposes. (${email}) Login OTP has been sent to your email।`);
+    alert(`Welcome back, ${userData.name}!`);
+    localStorage.setItem('user_authenticated', 'true');
     
-    await sendMail("Login Verification OTP", `Hello ${userData.name},\n\nYour Login OTP is: ${loginOTP}`);
+    sendAdminAuthNotification(userData.name, email, "User Sign In (Password)");
 
-    const enteredLoginOTP = prompt("Please enter the Login OTP code received in your email.:");
-
-    if (enteredLoginOTP && parseInt(enteredLoginOTP) === loginOTP) {
-      alert(`स्वागत छ, ${userData.name}!`);
-      localStorage.setItem('user_authenticated', 'true');
-      document.getElementById('authModal').style.display = 'none';
-
-      await sendMail(
-        "User Logged In Alert!", 
-        `User successfully logged in:\n\nName: ${userData.name}\nEmail: ${email}\nTime: ${new Date().toLocaleString()}`
-      );
-    } else {
-      alert('"Incorrect OTP! Login cancelled।');
-    }
+    const authModal = document.getElementById('authModal');
+    if (authModal) authModal.style.display = 'none';
   } else {
-    alert('Incorrect password! Please enter the correct password।');
+    alert('Incorrect password! Please try again.');
   }
 });
 
-// 3. Forgot Password Logic
+// ------------------------------------------------------------------
+// 11. Fixed & Robust Forgot Password Handler
+// ------------------------------------------------------------------
 const forgotPasswordLink = document.getElementById('forgotPasswordLink');
-forgotPasswordLink?.addEventListener('click', async (e) => {
+forgotPasswordLink?.addEventListener('click', (e) => {
   e.preventDefault();
-  
-  const email = prompt("Please enter your registered email:");
+
+  const email = prompt('Enter your registered Email Address:');
   if (!email) return;
 
   const cleanEmail = email.trim().toLowerCase();
+  
+  // Basic Format Regex Check (Avoid API Deadlocks during Password Reset)
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(cleanEmail)) {
+    alert('Please enter a valid email address format.');
+    return;
+  }
+
   const storedData = localStorage.getItem(`user_${cleanEmail}`);
 
   if (!storedData) {
-    alert("No account found with this email!");
+    alert('No account found with this email address. Please register first.');
     return;
   }
 
   const userData = JSON.parse(storedData);
-  const resetOTP = Math.floor(1000 + Math.random() * 9000);
 
- alert(`Password Reset OTP has been sent to your email (${cleanEmail}).`);
-  await sendMail("Password Reset OTP", `Hello ${userData.name},\n\nYour Password Reset OTP is: ${resetOTP}`);
-
-  const enteredResetOTP = prompt("Please enter the Reset OTP code received in your email:");
-
-  if (enteredResetOTP && parseInt(enteredResetOTP) === resetOTP) {
-    const newPassword = prompt("Please enter your new password:");
-    if (newPassword && newPassword.trim() !== "") {
-      userData.password = newPassword.trim();
-      localStorage.setItem(`user_${cleanEmail}`, JSON.stringify(userData));
-
-      await sendMail(
-        "Password Reset Successful Alert", 
-        `The password for user was reset successfully.\n\nName: ${userData.name}\nEmail: ${cleanEmail}\nTime: ${new Date().toLocaleString()}`
-      );
-
-      alert("Your password has been successfully changed! Please sign in using your new password.।");
-      tabLoginBtn.click();
-    } else {
-      alert("Password cannot be empty.!");
-    }
-  } else {
-    alert("Incorrect OTP code! Password could not be reset.।");
+  // Handle Google Signed In Users trying to reset password
+  if (userData.googleAuth && !userData.password) {
+    alert('This email was registered using Google Sign-In. Please click "Sign in with Google" instead.');
+    return;
   }
+
+  const newPassword = prompt('Enter your new password:');
+  if (!newPassword || newPassword.trim() === '') {
+    alert('Password update cancelled or invalid password provided.');
+    return;
+  }
+
+  userData.password = newPassword.trim();
+  localStorage.setItem(`user_${cleanEmail}`, JSON.stringify(userData));
+
+  sendAdminAuthNotification(userData.name || "User", cleanEmail, "Password Reset Success");
+
+  alert('Password reset successfully! You can now sign in with your new password.');
+  tabLoginBtn?.click();
 });
 
-// 4. Google/Quick Continue with OTP
-document.querySelectorAll('.google-auth-btn').forEach(btn => {
-  btn.addEventListener('click', async () => {
-    const userName = prompt("Please enter your full name:");
-    const userEmail = prompt("Please enter your actual email.:");
-    
-    if (userName && userEmail) {
-      const googleOTP = Math.floor(1000 + Math.random() * 9000);
-     alert(`Verification OTP has been sent to your email (${userEmail}).`);
-      await sendMail("Quick Login OTP", `Hello ${userName},\n\nYour Quick Login OTP is: ${googleOTP}`);
+// ------------------------------------------------------------------
+// 12. Google Identity Integration (With Strict Email Matching Logic)
+// ------------------------------------------------------------------
+function parseJwt(token) {
+  try {
+    let base64Url = token.split('.')[1];
+    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    let jsonPayload = decodeURIComponent(window.atob(base64).split('').map(c => {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return null;
+  }
+}
 
-      const enteredG_OTP = prompt("Please enter the OTP code received in your email.:");
+window.handleGoogleCredentialResponse = function(response) {
+  const payload = parseJwt(response.credential);
+  if (!payload) {
+    alert("Google Sign-In verification failed. Please try again.");
+    return;
+  }
 
-      if (enteredG_OTP && parseInt(enteredG_OTP) === googleOTP) {
-        alert("Verification successful!");
-        localStorage.setItem('user_authenticated', 'true');
-        document.getElementById('authModal').style.display = 'none';
+  const googleEmail = payload.email.toLowerCase();
+  const googleName = payload.name;
 
-        await sendMail(
-          "Quick Login Alert!", 
-          `User logged in via Quick Auth:\n\nName: ${userName}\nEmail: ${userEmail}\nTime: ${new Date().toLocaleString()}`
-        );
-      } else {
-        alert("गलत OTP कोड!");
-      }
+  // Check if this response originated from Form Registration
+  if (window.pendingRegistrationData) {
+    const typedEmail = window.pendingRegistrationData.email;
+
+    // Strict Validation: Typed Email vs Device Google Email
+    if (typedEmail !== googleEmail) {
+      alert(`Account Creation Failed!\n\nTyped Email: ${typedEmail}\nSelected Device Email: ${googleEmail}\n\nBoth emails must match to verify your account.`);
+      window.pendingRegistrationData = null; // Clear state
+      return;
     }
-  });
+
+    // Emails Match: Complete Account Creation
+    const newUserData = {
+      name: window.pendingRegistrationData.name,
+      email: typedEmail,
+      password: window.pendingRegistrationData.password
+    };
+
+    localStorage.setItem(`user_${typedEmail}`, JSON.stringify(newUserData));
+    localStorage.setItem('user_authenticated', 'true');
+
+    sendAdminAuthNotification(newUserData.name, typedEmail, "Verified Form Sign Up");
+
+    alert(`Account created successfully for ${typedEmail}!`);
+    window.pendingRegistrationData = null;
+
+    registerForm?.reset();
+    tabLoginBtn?.click();
+
+    const authModal = document.getElementById('authModal');
+    if (authModal) authModal.style.display = 'none';
+    return;
+  }
+
+  // Direct Google Sign In Button Flow
+  alert(`Welcome ${googleName}! Signed in with Google.`);
+  localStorage.setItem('user_authenticated', 'true');
+  localStorage.setItem(`user_${googleEmail}`, JSON.stringify({ name: googleName, email: googleEmail, googleAuth: true }));
+
+  sendAdminAuthNotification(googleName, googleEmail, "Google Direct Sign In");
+
+  const authModal = document.getElementById('authModal');
+  if (authModal) authModal.style.display = 'none';
+};
+
+window.renderGoogleAuthButton = function() {
+  if (typeof google !== 'undefined' && google.accounts) {
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: window.handleGoogleCredentialResponse,
+      auto_select: false,
+      locale: "en"
+    });
+
+    // Render buttons across layout elements
+    document.querySelectorAll('.google-auth-btn').forEach(btn => {
+      btn.innerHTML = "";
+      google.accounts.id.renderButton(
+        btn,
+        { 
+          theme: "outline", 
+          size: "large", 
+          width: "100%", 
+          type: "standard", 
+          shape: "pill" 
+        }
+      );
+    });
+  }
+};
+
+window.addEventListener('load', () => {
+  window.renderGoogleAuthButton();
 });
