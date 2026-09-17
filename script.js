@@ -8,10 +8,10 @@
 // API Configurations
 // ------------------------------------------------------------------
 const WEB3FORMS_ACCESS_KEY = "ddee9129-153a-41f6-bc3b-320a4563aabb";
-const EMAILVERIFY_API_KEY = "YOUR_EMAILVERIFY_API_KEY"; // Place your EmailVerify.io or Abstract API Key here
+const EMAILVERIFY_API_KEY = "YOUR_EMAILVERIFY_API_KEY"; 
 const GOOGLE_CLIENT_ID = "915820950265-ofrd7v6p7cvues6i5vd865ci8jqlj2v6.apps.googleusercontent.com";
 
-// Temporary Holder for Registration Data (Device Email Matching Logic)
+// Temporary Holder for Registration Data 
 window.pendingRegistrationData = null;
 
 // ------------------------------------------------------------------
