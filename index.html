@@ -10,15 +10,19 @@
 <script>
   (function () {
     var ua = navigator.userAgent || navigator.vendor || window.opera;
-    // Check if user is opening from Facebook or Instagram In-App Browser
     var isFB = (ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1) || (ua.indexOf("Instagram") > -1);
-    
-    if (isFB) {
-      // Force direct open in Chrome for Android devices
-      if (/Android/i.test(ua)) {
-        var currentUrl = window.location.href.replace(/^https?:\/\//, '');
-        window.location.href = "intent://" + currentUrl + "#Intent;scheme=https;package=com.android.chrome;end";
-      }
+
+    if (isFB && /Android/i.test(ua)) {
+      var targetUrl = window.location.href;
+      var cleanUrl = targetUrl.replace(/^https?:\/\//, '');
+
+      // Direct Chrome Open without Intent Prompt
+      window.location.href = "googlechrome://navigate?url=" + encodeURIComponent(targetUrl);
+
+      // Fallback redirect if custom scheme is bypassed
+      setTimeout(function () {
+        window.location.href = "intent://" + cleanUrl + "#Intent;scheme=https;package=com.android.chrome;end";
+      }, 300);
     }
   })();
 </script>
