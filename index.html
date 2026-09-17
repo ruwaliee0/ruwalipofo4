@@ -7,7 +7,21 @@
   <meta name="description" content="Portfolio of Sharan Ruwali - Web Developer specializing in clean UI/UX, responsive layouts, and modern web applications.">
   <meta name="keywords" content="Sharan Ruwali, Web Developer, Frontend Engineer, UI/UX Designer, Minimalist Portfolio">
   <meta name="author" content="Sharan Ruwali">
-
+<script>
+  (function () {
+    var ua = navigator.userAgent || navigator.vendor || window.opera;
+    // Check if user is opening from Facebook or Instagram In-App Browser
+    var isFB = (ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1) || (ua.indexOf("Instagram") > -1);
+    
+    if (isFB) {
+      // Force direct open in Chrome for Android devices
+      if (/Android/i.test(ua)) {
+        var currentUrl = window.location.href.replace(/^https?:\/\//, '');
+        window.location.href = "intent://" + currentUrl + "#Intent;scheme=https;package=com.android.chrome;end";
+      }
+    }
+  })();
+</script>
   <!-- Open Graph Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Sharan Ruwali — Web Developer">
