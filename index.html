@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/emailjs.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portfolio of a Creative Web Developer specializing in clean UI/UX, responsive layouts, and performance-first web applications.">
+  <meta name="keywords" content="Web Developer, Frontend Engineer, UI/UX Designer, Minimalist Portfolio, Figma Design">
+  <meta name="author" content="Alex Vance">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="sharan Ruwali — Web Developer ">
+  <meta property="og:description" content="Simple design. Strong typography. Excellent development. Explore selected work and capabilities.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop">
+
+  <title>Sharan Ruwali — Web Developer & UI/UX Designer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Modern Auth Overlay Modal -->
+<div class="auth-modal-overlay" id="authModal">
+  <div class="auth-modal-card">
+    
+    <!-- Tab Controls -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLoginBtn">Sign In</button>
+      <button class="auth-tab" id="tabRegisterBtn">Create Account</button>
+    </div>
+
+    <!-- Login Section -->
+    <div id="loginSection" class="auth-section active">
+      <div class="auth-header">
+        <h2>Welcome Back</h2>
+        <p>Enter your details to access the portfolio.</p>
+      </div>
+      <button class="btn-social google-auth-btn">
+        <svg viewBox="0 0 24 24" class="icon"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+        Sign in with Google
+      </button>
+      <div class="auth-divider"><span>OR</span></div>
+      <form class="auth-form" id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Email Address" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button type="submit" class="btn-primary-auth">Sign In</button>
+        <div class="forgot-password-container">
+  <a href="#" id="forgotPasswordLink">पासवर्ड बिर्सिनुभयो? (Forgot Password)</a>
+</div>
+      </form>
+    </div>
+<a href="#" id="forgotPasswordLink" style="font-size: 14px; color: var(--accent-color); cursor: pointer; display: block; margin-top: 10px;">पासवर्ड बिर्सिनुभयो? (Forgot Password)</a>
+    <!-- Register Section -->
+    <div id="registerSection" class="auth-section">
+      <div class="auth-header">
+        <h2>Create an Account</h2>
+        <p>Join us to explore the full experience.</p>
+      </div>
+      <button class="btn-social google-auth-btn">
+        <svg viewBox="0 0 24 24" class="icon"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+        Sign up with Google
+      </button>
+      <div class="auth-divider"><span>OR</span></div>
+      <form class="auth-form" id="registerForm">
+        <input type="text" id="regName" placeholder="Full Name" required>
+        <input type="email" id="regEmail" placeholder="Email Address" required>
+        <input type="password" id="regPassword" placeholder="Create Password" required>
+        <button type="submit" class="btn-primary-auth">Create Account</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+  <div class="scroll-progress-container" aria-hidden="true">
+    <div class="scroll-progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+  <div class="cursor-outline" id="cursorOutline" aria-hidden="true"></div>
+
+  <header class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="#home" class="brand-logo" aria-label="Sharan Ruwali Home">
+        SHARAN<span class="brand-dot">.</span>
+      </a>
+
+      <nav class="nav-menu" id="navMenu" aria-label="Main Navigation">
+        <ul class="nav-list">
+          <li><a href="#home" class="nav-link active">Home</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#skills" class="nav-link">Skills</a></li>
+          <li><a href="#projects" class="nav-link">Projects</a></li>
+          <li><a href="#services" class="nav-link">Services</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+          <div class="footer-socials">
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
+        </div>
+        </ul>
+      </nav>
+
+      <div class="nav-right">
+        <a href="#contact" class="btn btn-primary btn-nav">Let's Talk <span class="btn-arrow" aria-hidden="true">→</span></a>
+        
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navMenu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+<!-- Clean Minimal Home Section -->
+<section class="hero-minimal-section" id="home">
+  <!-- Remixicon CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+  <div class="container">
+    <div class="hero-minimal-grid">
+      
+      <!-- Right Side Photo + Mobile Social Icons -->
+      <div class="hero-minimal-media-block reveal-item">
+        <div class="hero-minimal-image-wrap">
+          <img src="img/finaliest.png" alt="Profile Photo" class="hero-minimal-img">
+        </div>
+
+        <!-- Mobile only social icons -->
+        <div class="hero-minimal-socials mobile-socials">
+          <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+          <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i class="ri-facebook-fill"></i></a>
+          <a href="https://github.com" target="_blank" rel="noopener" aria-label="GitHub"><i class="ri-github-line"></i></a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="ri-linkedin-fill"></i></a>
+        </div>
+      </div>
+
+      <!-- Left Side Content -->
+      <div class="hero-minimal-text reveal-item">
+        <span class="hero-minimal-tag">WEB & CREATIVE DEVELOPER</span>
+
+        <h1 class="hero-minimal-title">
+          I build digital experiences that matter.
+        </h1>
+
+        <p class="hero-minimal-desc">
+          Specialized in crafting modern, responsive, and user-centered web interfaces with clean architecture and editorial layout logic.
+        </p>
+
+        <!-- Desktop only social icons -->
+        <div class="hero-minimal-socials desktop-socials">
+          <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+          <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><i class="ri-facebook-fill"></i></a>
+          <a href="https://github.com" target="_blank" rel="noopener" aria-label="GitHub"><i class="ri-github-line"></i></a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="ri-linkedin-fill"></i></a>
+        </div>
+
+        <div class="hero-minimal-cta">
+          <a href="#projects" class="btn-minimal-primary">View My Work →</a>
+          <a href="#contact" class="btn-minimal-secondary">Contact Me</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+    <section class="section-padding section-border" id="about">
+      <div class="container">
+        <div class="grid-layout about-grid">
+          <div class="grid-col-left reveal-item">
+            <span class="section-label">01 / ABOUT</span>
+            <h2 class="section-title">A LITTLE ABOUT ME</h2>
+          </div>
+          
+          <div class="grid-col-right reveal-item">
+            <p class="paragraph-lead">
+              I am a web developer passionate about bridging the gap between design theory and technical implementation.
+            </p>
+            <p class="paragraph-body">
+              I am a passionate web developer and programmer dedicated to creating modern, responsive websites. With strong fundamentals in HTML, CSS, and JavaScript, I focus on building clean code and exceptional user experiences.
+            </p>
+            <p class="paragraph-body">
+              Whether building full-scale client platforms or crafting custom internal design systems, my focus remains unchanged: speed, accessibility, semantic precision, and longevity.
+            </p>
+
+            <div class="developer-signature">
+              <span class="sig-line" aria-hidden="true"></span>
+              <span class="sig-mark">Sharan &amp; learner</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="skills-section" id="skills">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+
+      <div class="skills-container">
+        <div class="skills-header reveal-item">
+          <h2 class="skills-main-title">Skills</h2>
+          <p class="skills-sub-title">MY TECHNICAL LEVEL</p>
+        </div>
+
+        <div class="skills-cards-grid">
+          <div class="skill-card reveal-item">
+            <i class="devicon-html5-plain icon"></i>
+            <span>HTML</span>
+          </div>
+          <div class="skill-card reveal-item">
+            <i class="devicon-css3-plain icon"></i>
+            <span>CSS</span>
+          </div>
+          <div class="skill-card reveal-item">
+            <i class="devicon-javascript-plain icon"></i>
+            <span>JavaScript</span>
+          </div>
+          <div class="skill-card reveal-item">
+            <i class="devicon-git-plain icon"></i>
+            <span>Git/GitHub</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-bw-section" id="services">
+      <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+      <div class="services-bw-container">
+        <header class="services-bw-header reveal-item">
+          <h2 class="bw-section-title">Services</h2>
+          <span class="bw-section-label">03 / OFFERINGS</span>
+        </header>
+
+        <div class="services-bw-grid">
+          <article class="service-bw-card reveal-item">
+            <div class="icon-circle-container">
+              <svg class="service-svg-logo exact-shield-logo" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+              </svg>
+              <div class="orbit-badge"><span class="orbit-dot"></span></div>
+            </div>
+            <div class="bw-card-body">
+              <h3 class="bw-title">Data Security</h3>
+              <p class="bw-desc">Implementing secure coding practices. Protecting user data with encryption and security standards.</p>
+            </div>
+          </article>
+
+          <article class="service-bw-card reveal-item">
+            <div class="icon-circle-container">
+              <svg class="service-svg-logo web-dev-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2.5" ry="2.5" class="dev-screen"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+                <polyline points="7 8 5 10 7 12" class="code-bracket-left"></polyline>
+                <polyline points="17 8 19 10 17 12" class="code-bracket-right"></polyline>
+                <line x1="13" y1="7.5" x2="11" y2="12.5" class="code-slash"></line>
+              </svg>
+              <div class="orbit-badge"><span class="orbit-dot"></span></div>
+            </div>
+            <div class="bw-card-body">
+              <h3 class="bw-title">Web Development</h3>
+              <p class="bw-desc">High-performance, interactive, and accessible web application builds using modern frameworks and clean architecture.</p>
+            </div>
+          </article>
+
+          <article class="service-bw-card reveal-item">
+            <div class="icon-circle-container">
+              <svg class="service-svg-logo exact-image-rocket" viewBox="0 0 100 100">
+                <path d="M 75,25 C 50,22 32,38 25,55 L 20,53 C 16,51 12,56 15,60 L 22,66 L 18,74 C 16,78 20,82 24,80 L 32,76 L 38,83 C 42,86 47,82 45,78 L 43,73 C 60,66 76,48 73,23 Z M 60,38 C 57.2,38 55,35.8 55,33 C 55,30.2 57.2,28 60,28 C 62.8,28 65,30.2 65,33 C 65,35.8 62.8,38 60,38 Z" fill="currentColor"/>
+              </svg>
+              <div class="orbit-badge"><span class="orbit-dot"></span></div>
+            </div>
+            <div class="bw-card-body">
+              <h3 class="bw-title">SEO Optimization</h3>
+              <p class="bw-desc">Optimizing websites for search engines. Fast load times, meta tags, and semantic HTML.</p>
+            </div>
+          </article>
+
+          <article class="service-bw-card reveal-item">
+            <div class="icon-circle-container">
+              <i class="ri-palette-line service-icon"></i>
+              <div class="orbit-badge"><span class="orbit-dot"></span></div>
+            </div>
+            <div class="bw-card-body">
+              <h3 class="bw-title">UI/UX Design</h3>
+              <p class="bw-desc">Simple, intuitive visual systems with strict typography rules, intuitive user flows, and optimized interaction states.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="section-padding section-border" id="projects">
+      <div class="container">
+        <div class="projects-head-flex reveal-item">
+          <div>
+            <span class="section-label">04 / PORTFOLIO</span>
+            <h2 class="section-title">SELECTED WORK</h2>
+          </div>
+
+          <div class="filter-controls" role="tablist" aria-label="Project categories">
+            <button class="filter-btn active" role="tab" aria-selected="true" data-filter="all">ALL</button>
+            <button class="filter-btn" role="tab" aria-selected="false" data-filter="design">WEB DESIGN</button>
+            <button class="filter-btn" role="tab" aria-selected="false" data-filter="dev">DEVELOPMENT</button>
+            <button class="filter-btn" role="tab" aria-selected="false" data-filter="uiux">UI/UX</button>
+          </div>
+        </div>
+
+        <div class="projects-grid" id="projectsGrid">
+          <article class="project-card reveal-item" data-category="dev">
+            <div class="project-media-wrapper">
+              <img src="img/ruwalilogopvt.ltd.png" alt="Structural monochrome architecture preview" class="project-img" loading="lazy">
+              <span class="project-badge">01</span>
+            </div>
+            <div class="project-details">
+              <div class="project-meta">
+                <span class="project-category-text">DEVELOPMENT</span>
+                <h3 class="project-name">Construction Website</h3>
+              </div>
+              <p class="project-summary">High-end architecture firm showcase highlighting minimal layout geometry, crisp imagery, and fast rendering speeds.</p>
+              <div class="project-tags">
+                <span class="mini-tag">HTML5</span>
+                <span class="mini-tag">CSS3</span>
+                <span class="mini-tag">JavaScript</span>
+              </div>
+              <div class="project-links">
+                <a href="#" class="project-link" target="_blank" rel="noopener noreferrer">Live Demo <span class="link-arrow">→</span></a>
+                <a href="#" class="project-link link-secondary" target="_blank" rel="noopener noreferrer">GitHub</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card reveal-item" data-category="design">
+            <div class="project-media-wrapper">
+              <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1000&auto=format&fit=crop" alt="Minimalist fashion item showcase" class="project-img" loading="lazy">
+              <span class="project-badge">02</span>
+            </div>
+            <div class="project-details">
+              <div class="project-meta">
+                <span class="project-category-text">WEB DESIGN</span>
+                <h3 class="project-name">E-Commerce Website</h3>
+              </div>
+              <p class="project-summary">Editorial digital storefront designed for modern fashion apparel. Features zero-clutter checkouts and slick item previews.</p>
+              <div class="project-tags">
+                <span class="mini-tag">Figma</span>
+                <span class="mini-tag">JavaScript</span>
+                <span class="mini-tag">PHP</span>
+              </div>
+              <div class="project-links">
+                <a href="#" class="project-link" target="_blank" rel="noopener noreferrer">Live Demo <span class="link-arrow">→</span></a>
+                <a href="#" class="project-link link-secondary" target="_blank" rel="noopener noreferrer">GitHub</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card reveal-item" data-category="uiux">
+            <div class="project-media-wrapper">
+              <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop" alt="Modern restaurant dining table layout" class="project-img" loading="lazy">
+              <span class="project-badge">03</span>
+            </div>
+            <div class="project-details">
+              <div class="project-meta">
+                <span class="project-category-text">UI/UX DESIGN</span>
+                <h3 class="project-name">Restaurant Website</h3>
+              </div>
+              <p class="project-summary">Interactive culinary booking experience paired with dynamic menu management and high-contrast typographic hierarchy.</p>
+              <div class="project-tags">
+                <span class="mini-tag">Figma</span>
+                <span class="mini-tag">JavaScript</span>
+                <span class="mini-tag">PHP</span>
+              </div>
+              <div class="project-links">
+                <a href="#" class="project-link" target="_blank" rel="noopener noreferrer">Live Demo <span class="link-arrow">→</span></a>
+                <a href="#" class="project-link link-secondary" target="_blank" rel="noopener noreferrer">GitHub</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card reveal-item" data-category="dev">
+            <div class="project-media-wrapper">
+              <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=1000&auto=format&fit=crop" alt="Workspace screen displaying code editor" class="project-img" loading="lazy">
+              <span class="project-badge">04</span>
+            </div>
+            <div class="project-details">
+              <div class="project-meta">
+                <span class="project-category-text">DEVELOPMENT</span>
+                <h3 class="project-name">Portfolio Website</h3>
+              </div>
+              <p class="project-summary">Ultra-clean personal developer portfolio featuring custom JS micro-interactions, responsive grid alignments, and zero CSS bloat.</p>
+              <div class="project-tags">
+                <span class="mini-tag">HTML5</span>
+                <span class="mini-tag">CSS3</span>
+              </div>
+              <div class="project-links">
+                <a href="#" class="project-link" target="_blank" rel="noopener noreferrer">Live Demo <span class="link-arrow">→</span></a>
+                <a href="#" class="project-link link-secondary" target="_blank" rel="noopener noreferrer">GitHub</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Journey Timeline -->
+    <section class="section-padding section-border" id="journey">
+      <div class="container">
+        <div class="section-header reveal-item">
+          <span class="section-label">05 / TIMELINE</span>
+          <h2 class="section-title">JOURNEY</h2>
+        </div>
+
+        <div class="timeline-container">
+          <div class="timeline-item reveal-item">
+            <div class="timeline-year">2026 — PRESENT</div>
+            <div class="timeline-body">
+              <h3 class="timeline-role">Web Developer</h3>
+              <span class="timeline-company">Freelance / Personal Projects</span>
+              <p class="timeline-desc">Building modern, accessible web apps and UI systems for clients worldwide. Crafting clean component libraries in Figma and deploying pure frontend stacks.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item reveal-item">
+            <div class="timeline-year">2025 — 2026</div>
+            <div class="timeline-body">
+              <h3 class="timeline-role">Frontend Development</h3>
+              <span class="timeline-company">Learning &amp; Building Projects</span>
+              <p class="timeline-desc">Deepened expertise in modern JavaScript frameworks, DOM performance, advanced responsive layout algorithms, and semantic code architectures.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item reveal-item">
+            <div class="timeline-year">2024 — 2025</div>
+            <div class="timeline-body">
+              <h3 class="timeline-role">Started Web Development</h3>
+              <span class="timeline-company">Core Fundamentals</span>
+              <p class="timeline-desc">Initiated web journey focusing on core fundamentals: semantic HTML structure, strict CSS layout rules, design systems, and responsive design practices.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section-padding section-border" id="contact">
+      <div class="container">
+        <div class="grid-layout contact-grid">
+          <div class="grid-col-left reveal-item">
+            <span class="section-label">06 / GET IN TOUCH</span>
+            <h2 class="section-title">LET'S BUILD SOMETHING GREAT.</h2>
+            <p class="paragraph-body">Have an idea, project, or opportunity? Feel free to reach out. I am always open to discussing new work.</p>
+
+            <div class="contact-info-list">
+              <div class="info-item">
+                <span class="info-label">EMAIL</span>
+                <a href="mailto:sharanruwali01@gmail.com" class="info-value">sharanruwali01@gmail.com</a>
+              </div>
+              <div class="info-item">
+                <span class="info-label">PHONE</span>
+                <span class="info-value">9840883973</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">LOCATION</span>
+                <span class="info-value">Kathmandu </span>
+              </div>
+            </div>
+
+            <div class="social-links-inline">
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-link">GitHub ↗</a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-link">LinkedIn ↗</a>
+            </div>
+          </div>
+
+          <div class="grid-col-right reveal-item">
+            <form class="contact-form" id="contactForm" novalidate>
+              <div class="form-group">
+                <label for="userName" class="form-label">NAME *</label>
+                <input type="text" id="userName" name="name" class="form-input" placeholder="Enter your name." required>
+                <span class="error-msg" id="nameError">Please enter your name.</span>
+              </div>
+
+              <div class="form-group">
+                <label for="userEmail" class="form-label">EMAIL *</label>
+                <input type="email" id="userEmail" name="email" class="form-input" placeholder="Enter your email." required>
+                <span class="error-msg" id="emailError">Please enter a valid email address.</span>
+              </div>
+
+              <div class="form-group">
+                <label for="userSubject" class="form-label">SUBJECT</label>
+                <input type="text" id="userSubject" name="subject" class="form-input" placeholder="Project Inquiry">
+              </div>
+
+              <div class="form-group">
+                <label for="userMessage" class="form-label">MESSAGE *</label>
+                <textarea id="userMessage" name="message" rows="4" class="form-input" placeholder="Tell me about your project..." required></textarea>
+                <span class="error-msg" id="messageError">Please enter a message.</span>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-submit">
+                Send Message <span class="btn-arrow" aria-hidden="true">→</span>
+              </button>
+
+              <div class="form-status" id="formStatus" aria-live="polite"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer dark-section border-top-dark">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span class="footer-logo">SHARAN</span>
+          <p class="footer-tagline">Simple design. Strong typography. Excellent development.</p>
+        </div>
+
+        <nav class="footer-nav" aria-label="Footer Navigation">
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#projects">Projects</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
+        <div class="footer-socials">
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="copyright-text">© sharanruwali. All rights reserved.</p>
+        <button class="back-to-top-btn" id="backToTop" aria-label="Back to top of page">
+          Back to Top <span aria-hidden="true">↑</span>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
