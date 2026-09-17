@@ -43,9 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      alert('इमेलमा OTP पठाउँदैछ, कृपया प्रतिक्षा गर्नुहोस्...');
+      alert('Sending OTP to email, please wait...');
 
-      // ब्याकइन्ड सर्भरमा OTP पठाउन अनुरोध गर्ने (fetch call)
+      // Request backend server to send OTP (fetch call)
       const sendResponse = await fetch('http://localhost:3000/api/send-otp', {
         method: 'POST',
         headers: {
@@ -57,16 +57,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const sendData = await sendResponse.json();
 
       if (!sendData.success) {
-        alert(sendData.message || 'OTP पठाउन सकिएन।');
+        alert(sendData.message || 'Failed to send OTP.');
         return;
       }
 
-      // युजरलाई इमेलमा आएको OTP हाल्न माग्ने
-      const userEnteredOTP = prompt(`तपाईंको इमेल (${email}) मा पठाइएको ४ डिजिटको OTP यहाँ राख्नुहोस्:`);
+      // Ask the user to enter the OTP received in their email
+      const userEnteredOTP = prompt(`Please enter the 4-digit OTP sent to your email (${email}):`);
 
       if (!userEnteredOTP) return;
 
-      // युजरले हालेको OTP भेरिफाइ गर्न ब्याकइन्डमा पठाउने
+      // Send the user-entered OTP to the backend for verification
       const verifyResponse = await fetch('http://localhost:3000/api/verify-otp', {
         method: 'POST',
         headers: {
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const verifyData = await verifyResponse.json();
 
       if (verifyData.success) {
-        // भेरिफाइ भएपछि मात्र LocalStorage मा सेभ गर्ने
+        // Save to LocalStorage only after successful verification
         const userData = { name, email, password };
         localStorage.setItem(`user_${email}`, JSON.stringify(userData));
         
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } catch (error) {
       console.error('Server Connection Error:', error);
-      alert('ब्याकइन्ड सर्भरसँग जोडिन सकिएन। कृपया terminal मा "node server.js" चलाउनु भएको छ कि छैन चेक गर्नुहोस्।');
+      alert('Could not connect to the backend server. Please check if you have run "node server.js" in the terminal.');
     }
   });
 });
