@@ -555,3 +555,31 @@ window.renderGoogleAuthButton = function() {
 window.addEventListener('load', () => {
   window.renderGoogleAuthButton();
 });
+/* ================= UNIQUE PRE-LOGIN AD SCRIPT ================= */
+const ENABLE_AD = true; // false banaye paxi yo bypass hunchha
+
+document.addEventListener("DOMContentLoaded", () => {
+    const adScreen = document.getElementById("pre-login-ad");
+    const loginSection = document.getElementById("login-section");
+
+    if (!ENABLE_AD) {
+        if (adScreen) adScreen.style.display = "none";
+        if (loginSection) loginSection.style.display = "block";
+        return;
+    }
+
+    // Initial state: Ad visible, login strictly hidden
+    if (adScreen) adScreen.style.display = "flex";
+    if (loginSection) loginSection.style.display = "none";
+
+    const cancelBtn = document.getElementById("ad-cancel-btn");
+    const enterBtn = document.getElementById("ad-enter-btn");
+
+    function dismissAd() {
+        if (adScreen) adScreen.style.display = "none";
+        if (loginSection) loginSection.style.display = "block"; // Login section dekhauxa
+    }
+
+    if (cancelBtn) cancelBtn.onclick = dismissAd;
+    if (enterBtn) enterBtn.onclick = dismissAd;
+});
