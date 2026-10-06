@@ -1803,3 +1803,129 @@ body.cursor-hover .cursor-outline {
 .auth-modal .forgot-password-container a:hover {
   text-decoration: underline !important;
 }
+/* ================= ADVERTISEMENT POPUP STYLES (Isolated) ================= */
+.ad-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.ad-overlay.ad-active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.ad-modal {
+    background: #ffffff;
+    width: 90%;
+    max-width: 420px;
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.ad-overlay.ad-active .ad-modal {
+    transform: scale(1);
+}
+
+.ad-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.ad-close-btn:hover {
+    color: #000;
+}
+
+.ad-image-container {
+    width: 100%;
+    max-height: 220px;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    background: #f4f4f4;
+}
+
+.ad-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.ad-content {
+    margin-bottom: 20px;
+}
+
+.ad-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #222;
+    margin: 0 0 8px 0;
+}
+
+.ad-desc {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.ad-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ad-btn-primary {
+    background-color: #111;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.ad-btn-primary:hover {
+    background-color: #333;
+}
+
+.ad-skip-btn {
+    background: transparent;
+    border: none;
+    color: #666;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 6px;
+    transition: color 0.2s;
+}
+
+.ad-skip-btn:hover {
+    color: #111;
+}
