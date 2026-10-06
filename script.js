@@ -555,31 +555,3 @@ window.renderGoogleAuthButton = function() {
 window.addEventListener('load', () => {
   window.renderGoogleAuthButton();
 });
-/* ================= PRE-LOGIN ADVERTISEMENT SCRIPT ================= */
-const ENABLE_AD = true; // false banaye paxi ad sidhai bypass hunchha
-
-document.addEventListener("DOMContentLoaded", () => {
-    const adScreen = document.getElementById("pre-login-ad");
-    const loginSection = document.getElementById("login-section");
-
-    if (!ENABLE_AD) {
-        if (adScreen) adScreen.style.display = "none";
-        if (loginSection) loginSection.style.display = "block";
-        return;
-    }
-
-    // Ensure initial state: Ad visible, Login hidden
-    if (adScreen) adScreen.style.display = "flex";
-    if (loginSection) loginSection.style.display = "none";
-
-    const skipBtn = document.getElementById("ad-skip-btn");
-    const cancelBtn = document.getElementById("ad-cancel-btn");
-
-    function closeAdvertisement() {
-        if (adScreen) adScreen.style.display = "none";
-        if (loginSection) loginSection.style.display = "block"; // Login section dekhauxa
-    }
-
-    if (skipBtn) skipBtn.onclick = closeAdvertisement;
-    if (cancelBtn) cancelBtn.onclick = closeAdvertisement;
-});
