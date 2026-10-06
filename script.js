@@ -555,3 +555,89 @@ window.renderGoogleAuthButton = function() {
 window.addEventListener('load', () => {
   window.renderGoogleAuthButton();
 });
+/* ================= SAFE ADVERTISEMENT SCRIPT ================= */
+const ENABLE_AD = true;          // false banaye paxi ad dekhidena (aru code lai touch gardena)
+const ENABLE_COUNTDOWN = true;   // countdown chahiyena bhane false garnu hos
+const AD_DURATION = 5;           // seconds
+
+let adTimer = null;
+let countdownInterval = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (ENABLE_AD) {
+        showAd();
+    } else {
+        const adOverlay = document.getElementById("ad-popup-overlay");
+        if (adOverlay) adOverlay.style.display = "none";
+    }
+});
+
+function showAd() {
+    const adOverlay = document.getElementById("ad-popup-overlay");
+    const skipBtn = document.getElementById("ad-skip-btn");
+    const closeBtn = document.getElementById("ad-close-btn");
+    const viewBtn = document.getElementById("ad-view-btn");
+
+    if (!adOverlay) return;
+
+    adOverlay.classList.add("ad-active");
+
+    // Clean bindings
+    skipBtn.onclick = skipAd;
+    closeBtn.onclick = closeAd;
+    viewBtn.onclick = closeAd;
+
+    if (ENABLE_COUNTDOWN) {
+        startCountdown();
+    }
+}
+
+function startCountdown() {
+    const skipBtn = document.getElementById("ad-skip-btn");
+    if (!skipBtn) return;
+
+    let timeLeft = AD_DURATION;
+    skipBtn.textContent = `Skip in ${timeLeft}s`;
+
+    countdownInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+            skipBtn.textContent = `Skip in ${timeLeft}s`;
+        } else {
+            clearInterval(countdownInterval);
+            skipBtn.textContent = "Skip →";
+        }
+    }, 1000);
+
+    adTimer = setTimeout(() => {
+        closeAd();
+    }, AD_DURATION * 1000);
+}
+
+function clearAdTimers() {
+    if (adTimer) {
+        clearTimeout(adTimer);
+        adTimer = null;
+    }
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+    }
+}
+
+function skipAd() {
+    clearAdTimers();
+    closeAd();
+}
+
+function closeAd() {
+    clearAdTimers();
+    const adOverlay = document.getElementById("ad-popup-overlay");
+    if (!adOverlay) return;
+
+    adOverlay.classList.remove("ad-active");
+    
+    setTimeout(() => {
+        adOverlay.style.display = "none";
+    }, 300);
+}
