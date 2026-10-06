@@ -31,7 +31,31 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<!-- ================= SAFE ADVERTISEMENT POPUP ================= -->
+<div id="ad-popup-overlay" class="ad-overlay">
+    <div class="ad-modal">
+        <!-- Close Button -->
+        <button id="ad-close-btn" class="ad-close-btn" aria-label="Close">&times;</button>
+        
+        <!-- Advertisement Image (Tapai le yaha afno image rakhna saknu hunxa) -->
+        <div class="ad-image-container">
+            <img src="assets/images/portfolio-ad.jpg" alt="Portfolio Ad" class="ad-img">
+        </div>
 
+        <!-- Funny Content -->
+        <div class="ad-content">
+            <h3 class="ad-title">Hey! Wait a second 😄</h3>
+            <p class="ad-desc">Before you enter my portfolio, check this out!</p>
+        </div>
+
+        <!-- Buttons & Countdown -->
+        <div class="ad-actions">
+            <button id="ad-view-btn" class="ad-btn-primary">View Portfolio</button>
+            <button id="ad-skip-btn" class="ad-skip-btn">Skip →</button>
+        </div>
+    </div>
+</div>
+<!-- ================= END ADVERTISEMENT ================= -->
   <!-- Auth Modal -->
   <div class="auth-modal-overlay" id="authModal">
     <div class="auth-modal-card">
